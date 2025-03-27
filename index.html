@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Strategy Generator</title>
+    <!-- Load Poppins font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover:not(.loading) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button.loading {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Spinner inside button */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        button.loading .spinner {
+            display: inline-block;
+        }
+
+        button.loading span {
+            display: none;
+        }
+
+        /* AI Thinking Animation */
+        .thinking-ai {
+            display: none;
+            text-align: center;
+            margin-top: 20px; /* Position below the form */
+            font-size: 1.2rem;
+            color: #4CAF50;
+        }
+
+        .thinking-ai.active {
+            display: block;
+            animation: pulse 1.5s infinite;
+        }
+
+        .thinking-ai::before {
+            content: "🤖 AI is thinking...";
+            display: block;
+        }
+
+        .thinking-ai-note {
+            font-size: 0.9rem;
+            color: #ddd;
+            margin-top: 5px;
+        }
+
+        .results {
+            margin-top: 30px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h2 {
+            color: #fff;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .markdown-content h3 {
+            color: #4CAF50;
+            margin-top: 20px;
+            font-size: 1.5rem;
+        }
+
+        .markdown-content p {
+            line-height: 1.6;
+            color: #ddd;
+        }
+
+        .markdown-content ul {
+            margin-left: 20px;
+            color: #ddd;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.6; transform: scale(1); }
+        }
+
+        /* Neumorphic Effect for Inputs */
+        input, select, button {
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        input:hover, select:hover, button:hover:not(.loading) {
+            box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.3), -8px -8px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            button {
+                font-size: 1rem;
+            }
+            .thinking-ai {
+                font-size: 1rem;
+            }
+            .thinking-ai-note {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Marketing Strategy Generator</h1>
+        <form method="POST" id="strategyForm">
+            <label for="prompt">Prompt (e.g., "How can I grow my software business?"):</label>
+            <input type="text" id="prompt" name="prompt" placeholder="Enter your prompt here" required aria-label="Marketing prompt">
+
+            <label for="usercost">Budget (Enter amount):</label>
+            <input type="number" id="usercost" name="usercost" min="1" placeholder="e.g., 50,000" required aria-label="Budget amount">
+
+            <label for="currency">Currency:</label>
+            <select id="currency" name="currency" aria-label="Select currency">
+                <option value="INR">INR</option>
+                <option value="USD">USD</option>
+            </select>
+
+            <label for="place">Location (e.g., Hyderabad):</label>
+            <input type="text" id="place" name="place" placeholder="Enter your location" required aria-label="Location">
+
+            <button type="submit"><span>Generate Strategy</span><div class="spinner"></div></button>
+        </form>
+
+        <div class="thinking-ai" id="thinkingAnimation">
+            <div class="thinking-ai-note">This will take 1-2 minutes to generate</div>
+        </div>
+
+        {% if results %}
+        <div class="results" id="resultsSection">
+            <h2>Your Marketing Strategy</h2>
+            <div class="markdown-content">{{ results | safe }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const form = document.getElementById('strategyForm');
+        const button = form.querySelector('button');
+        const thinkingAnimation = document.getElementById('thinkingAnimation');
+
+        form.addEventListener('submit', function(e) {
+            // Prevent form submission for demo purposes (remove this if you have a backend)
+            // e.preventDefault();
+
+            // Show loading state
+            button.classList.add('loading');
+            button.disabled = true;
+
+            // Show AI thinking animation
+            thinkingAnimation.classList.add('active');
+
+            // Run animation for exactly 130 seconds (2 minutes and 10 seconds)
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.disabled = false;
+                thinkingAnimation.classList.remove('active');
+            }, 150000); // 130-second delay
+
+            // Simulate processing time (optional, remove this when using a real backend)
+            setTimeout(() => {
+                const resultsDiv = document.createElement('div');
+                resultsDiv.className = 'results';
+                resultsDiv.id = 'resultsSection';
+                resultsDiv.innerHTML = `
+                    <h2>Your Marketing Strategy</h2>
+                    <div class="markdown-content">Sample strategy generated!</div>
+                `;
+                form.parentNode.appendChild(resultsDiv);
+            }, 3000); // 3-second delay for demo (results appear but animation continues)
+        });
+    </script>
+</body>
+</html>
